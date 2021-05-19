@@ -38,43 +38,24 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
   visualizer();
 }
 
 void visualizer(){
-  //getSamples();
+  getSamples();
   displayUpdate();
-  delay(10);
+  //delay(1000);
   FastLED.show();
 }
 
 void displayUpdate(){
   int color = 0;
   //int color = map(analogRead(A2), 40, 1000, 0, 255);
-  int bright = map(analogRead(A3), 0, 1000, 0, 240);
+  //int bright = map(analogRead(A3), 0, 1000, 0, 240);
+  int bright = 240;
   // i is columns
-  /*for(int i=0; i<xres; i++){
-    // j is rows
-    for(int j=0; j<yres; j++){
-      if(j<= Intensity[i]){
-        if(j%2 != 0){
-          leds[(xres*(j+1))-i-1] = CHSV(color, 255, bright);
-        }
-        else {
-          leds[(xres*j)+i] = CHSV(color, 255, bright);
-        }
-      }
-      else {
-        if(j%2!=0){
-          leds[(xres*(j+1))-i-1] = CHSV(color, 255, 0);
-        }
-        else {
-          leds[(xres*j)+i] = CHSV(color, 255, 0);
-        }
-      }
-    }
-    //color += 255/xres;
-  }*/
+  
   for(int i=0; i<yres; i++){
     // j is rows
     color = 240;
@@ -95,7 +76,7 @@ void displayUpdate(){
           leds[xres*(i+1)-j-1] = CHSV(color, 255, 0);
         }
       }
-       color -= 255/xres;
+       //color -= 255/xres;
     }
    
   }
@@ -113,14 +94,6 @@ void getSamples(){
   FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
   FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
 
-  /*for(int i=2; i < (xres*Displacement)+2; i+=Displacement){
-    vReal[i] = constrain(vReal[i], 0, 2047);
-    vReal[i] = map(vReal[i], 0, 2047, 0, yres);
-
-    Intensity[(i/Displacement)-2]--;
-    if(vReal[i] > Intensity[(i/Displacement)-2])
-      Intensity[(i/Displacement)-2] = vReal[i];
-  }*/
   for(int i=2; i < (yres*Displacement)+2; i+=Displacement){
     vReal[i] = constrain(vReal[i], 0, 2047);
     vReal[i] = map(vReal[i], 0, 2047, 0, yres);
