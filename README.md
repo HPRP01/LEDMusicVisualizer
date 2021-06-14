@@ -10,6 +10,20 @@ Currently in the process of creating an Arduino/ESP32 based music visualizer. Th
 
 The code is based on examples created by [s-marley](https://github.com/s-marley/ESP32_FFT_VU) and [mrme88](https://github.com/mrme88/Arduino-Audio-Visualizer).
 
+### Update 6/13
+After taking a bit of a break I have come back to this project with a new update. The visualizer itself appears to be working correctly and I have implemented a potientometer to adjust the gain of the music. I have also mounted the strips onto a piece of plywood and am beginning to create a more finished product. I want to build some type of enclosure for the electronics to hide some of the wires and create a way to more easily adjust the potientometers. 
+
+Next steps for the code include adding in a way to adjust color modes and patterns as well as the automatic gain adjustment. 
+
+-hp
+
+### Update 5/23
+I have spent more time troubleshooting as the matrix appeared to only be showing frequency up to 500hz and I realized that this was becausing I wasn't breaking the samples into bands and was indexing to columns of the visualizer that did not exist. It also seems that even without a noise filter I am not having any problems so breaking into bands may have helped with that. 
+
+The next thing I plan to work on is fine tuning the rate that the bars fall/drop as well as a was to automatically sense and adjust the "gain" of the bars depending on the volume of the source. One quick fix at this point may be to add a potentiometer to control this manually until I can get another system working. 
+
+-hp
+
 ### Update 5/19
 After a couple hours of troubleshooting and testing it appears that the visualizer is now working. I ended up having some code that was specific to the arduino and have since removed it. Other things I had to modify include adding a sampling delay as the clock speed on the ESP32 is much higher. 
 
