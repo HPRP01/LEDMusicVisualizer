@@ -3,33 +3,31 @@
 #include <FastLED.h>
 #include <arduinoFFT.h>
 
+#define LED_PIN   33    // Define output pin for LED strip
+#define AUDIO_IN  35    // Define input pin for AUX in  
 
-#define LED_PIN     33
-#define AUDIO_IN      35
 
+#define NUM_LEDS 300    // Define number of LEDS in strip
+int BRIGHTNESS = 150;   // Int used to store brightness of strip
+#define LED_TYPE WS2812 // Define the type of LED strip
+#define COLOR_ORDER GRB // Define the color order of LED strip
 
-#define NUM_LEDS    300
-int BRIGHTNESS = 150; 
-#define LED_TYPE    WS2812
-#define COLOR_ORDER GRB
+#define SAMPLES 1024    // Define number of samples (higher = more accurate display but slower)
+#define xres 15         // Define number of Cols
+#define yres 20         // Define number of Rows
 
-#define SAMPLES 1024
-#define xres 15     //Cols
-#define yres 20     //Rows
+double vReal[SAMPLES];  // Double array to store real values      (used in FFT)
+double vImag[SAMPLES];  // Double array to store imaginary values (used in FFT)
 
-double vReal[SAMPLES];
-double vImag[SAMPLES];
+int Intensity[yres] = {0};    // Array to store intensity of each column
+int PrevIntensity[yres]= {0}; // Array to store previous intensity of each column
 
-//int Intensity[xres] = {0 };
-int Intensity[yres] = {0};
-int PrevIntensity[yres]= {0};
-int Displacement = 1;
+CRGB leds[NUM_LEDS];    // Create array of LEDS
 
-CRGB leds[NUM_LEDS];
-arduinoFFT FFT = arduinoFFT(vReal, vImag, SAMPLES, SAMPLING_FREQUENCY);
+arduinoFFT FFT = arduinoFFT(vReal, vImag, SAMPLES, SAMPLING_FREQUENCY); // Initialize FFT 
+unsigned int sampling_period;                                           // Used to store sampling period
 
-unsigned int sampling_period;
-
+// SETUP ***************************************************************************************************
 void setup() {
   //analogReference(EXTERNAL);
   pinMode(AUDIO_IN, INPUT);
@@ -42,30 +40,35 @@ void setup() {
   sampling_period = round(1000000 * (1.0 / SAMPLING_FREQUENCY));
 }
 
+// MAIN LOOP ***********************************************************************************************
 void loop() {
   // put your main code here, to run repeatedly:
   
   visualizer();
 }
 
+// VISUALIZER FUNCTION *************************************************************************************
 void visualizer(){
   getSamples();
   displayUpdate();
-  //delay(1000);
   FastLED.show();
 }
 
+// DISPLAY UPDATE FUNCTION *********************************************************************************
 void displayUpdate(){
-  //int color = 0;
-  int color = map(analogRead(32), 0, 4095, 0, 255);
+
+  
+  int color = 80;
+  //int color = map(analogRead(32), 0, 4095, 0, 255);
+
+  
   Serial.println(color);
   int bright = map(analogRead(34), 0, 4095, 0, 240);
   //int bright = 240;
   // i is columns
-  //int color = 0;
   for(int i=0; i<yres; i++){
     // j is rows
-    
+    int color = 90;
     for(int j=0; j<xres; j++){
       if(j<= Intensity[i]){
         if(i%2 == 0){
@@ -82,14 +85,14 @@ void displayUpdate(){
         else {
           leds[xres*(i+1)-j-1] = CHSV(color, 255, 0);
         }
-      }
-       //color += 255/xres;
+      }      
+      color -= 100/xres;   
     }
-   //color+=255/5;
-   
+    //color+=255/yres;
   }
 }
 
+// GET SAMPLES FUNCTION *****************************************************************
 void getSamples(){
   int amplitude = map(analogRead(25), 0, 4095, 500, 2000);
   //Take in samples from aux input
